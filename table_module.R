@@ -20,6 +20,16 @@ handsOnTableServer <- function(id, dat) {
                  observeEvent(input$button, {
                    values$data <- add_row(values$data)
                  })
+                 # A second observe event triggers when values are changed
+                 # and make the changes to the underlying data
+                 observeEvent(input$table$changes$changes, {
+                   # The + 1 is to account for the JS indexes that are used
+                   row <- input$table$changes$changes[[1]][[1]] + 1
+                   col <- input$table$changes$changes[[1]][[2]] + 1
+                   val <- input$table$changes$changes[[1]][[4]]
+                   values$data[row, col] <- val
+                   }, ignoreInit = T)
+                 
                  output$table <-
                    renderRHandsontable({
                      rhandsontable(values$data,
@@ -34,10 +44,10 @@ handsOnTableServer <- function(id, dat) {
 # Test the module with the mtcars data
 ui <- fluidPage(titlePanel("table module"),
                 
-                handsOnTableUi("table1", buttonLabel = "Add Row!"))
+                handsOnTableUi("table_test", buttonLabel = "Add Row!"))
 
 server <- function(input, output, session) {
-  handsOnTableServer(id = "table1", dat = mtcars[1:10, 1:10])
+  handsOnTableServer(id = "table_test", dat = mtcars[1:10, 1:10])
   
 }
 
