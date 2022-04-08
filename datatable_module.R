@@ -1,5 +1,6 @@
 library(shiny)
 library(DT)
+library(shinythemes)
 
 options(shiny.autoreload = TRUE)
 
@@ -37,7 +38,20 @@ dtServer <- function(id, dat, rownames = F) {
 
 
 # Example of module running 
-ui <- fluidPage(
+ui <- fluidPage(theme = bslib::bs_theme(bootswatch = "superhero"),
+  tags$head(
+   
+    tags$style("
+    table.dataTable tbody th, table.dataTable tbody td {
+    padding: 1px 1px !important;
+    text-align: right;
+    }
+    .table th, .table td {
+    padding: .25rem;
+    text-align: right;
+    }
+               ")
+  ),
   mainPanel(
     tabsetPanel(
       
@@ -55,13 +69,22 @@ ui <- fluidPage(
   )
 )
 
+options(DT.options = list(ordering = F, pageLength = 10, dom = "t"))
 
 server <- function(input, output, session) {
   # Set data for both tables
   df <- iris[1:10,]
   
   # Non-mod code
-  output$table <- renderDT(df, editable = TRUE, server = TRUE, rownames = TRUE)
+  # Note that additional parameters must be passed through ... of renderDT instead of 
+  # through datatable()
+  output$table <- renderDT(df,
+                           editable = TRUE,
+                           server = TRUE,
+                           rownames = TRUE,
+                           class = "my_tab",
+                           caption = "Tester Tester"
+                           )
   
   observeEvent(input$table_cell_edit, {
     df <<-
