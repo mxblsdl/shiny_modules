@@ -50,7 +50,7 @@ ui <- fluidPage(theme = bslib::bs_theme(bootswatch = "superhero"),
     padding: .25rem;
     text-align: right;
     }
-               ")
+    ")
   ),
   mainPanel(
     tabsetPanel(
